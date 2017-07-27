@@ -88,7 +88,7 @@ public class SNPSeekTest {
 			    
 			    //testing pairwise table
 			    if(testType.equals("snppairwise")){			    	
-			    	//get the parameters of snppairwise
+			    	//get the parameters of snppairwise, check first if empty
 			    	String expected = "", header = "", variety1 = "", variety2 = "", chromosome = "", start = "", end = "", header2 = "";
 			    	Boolean mismatchonly = false;
 			    	
@@ -126,7 +126,7 @@ public class SNPSeekTest {
 			    	driver.close();
 			    	
 			    } else if (testType.equals("snpmatrix")){
-			    	//get the parameters of snpmatrix
+			    	//get the parameters of snpmatrix, check first if empty
 			    	String expected = "", subpopulation = "", chromosome = "", start = "", end = "", downloadType = "";
 			    	Boolean mismatchonly = false, testHaplotype = false;
 			    	
@@ -161,7 +161,7 @@ public class SNPSeekTest {
 			    	driver.close();
 			    	
 			    } else if (testType.equals("variety")){
-			    	//get parameters of variety
+			    	//get parameters of variety, check first if empty
 			    	String dataset = "", country = "", designation = "", accession = "", subpopulation = "", irisID = "", phenotype = "", phenotype_comp = "", phenotype_comp_value = "";
 			    	int expected = 0;
 			    	
@@ -202,7 +202,7 @@ public class SNPSeekTest {
 			    	driver.close();
 			    	
 			    } else if (testType.equals("locus")){
-			    	//get parameters of locus
+			    	//get parameters of locus, check first if empty
 			    	String expected = "", querytype = "", databasetype = "", maxevalue = "", sequence = "";
 			    	
 			    	if (jsonObject.has("expected")) {
@@ -312,8 +312,8 @@ public class SNPSeekTest {
 				String[] pair1 = getData(header);
 				String[] pair2 = getData(header2);
 				
-				if(pair1.equals(pair2)) justAppend("ERROR ON MISMATCH: Found Match");
-				else justAppend("NO ERROR ON MISMATCH: No match found");
+				if(pair1.equals(pair2)) justAppend("ERROR ON MISMATCH: Found Match \n");
+				else justAppend("NO ERROR ON MISMATCH: No match found \n");
 			}
 		}
 	}
@@ -735,8 +735,8 @@ public class SNPSeekTest {
 		}
 	}
 	
+	//function for reading the file and counting the rows
 	public static StringBuilder readFile(String filename){
-		//count rows
 		int linecount = 0;
 		StringBuilder stringBuilder = new StringBuilder();
 		
@@ -770,6 +770,7 @@ public class SNPSeekTest {
 		
 	}
 	
+	//function to compare files
 	public static String checkSum(String filepath) throws NoSuchAlgorithmException, IOException{
 
 	    String datafile = filepath;
@@ -1131,15 +1132,15 @@ public class SNPSeekTest {
 	//Result for checking rows and columns
 	public static void checkRows(int result, int totalrows, String testtype){
 		testcount++;
-		writeOutput("Test " + testcount);
+		writeOutput("\nTest " + testcount);
 		writeOutput("Test Type: " + testtype);
 		
 		if(totalrows == result){
-			writeOutput("NO ERROR \n");
+			writeOutput("NO ERROR");
 		} else {
 			writeOutput("ERROR");
 			writeOutput("Expected rows: " + totalrows);
-			writeOutput("Resulted rows: " + result + "\n");
+			writeOutput("Resulted rows: " + result + "");
 		}
 		
 	}
@@ -1147,11 +1148,11 @@ public class SNPSeekTest {
 	//Result for checking rows
 	public static void checkRowsCols(String testtype, int resrow, int totalrows, int rescol, int totalcols){
 		testcount++;
-		writeOutput("Test " + testcount);
+		writeOutput("\nTest " + testcount);
 		writeOutput("Test Type: " + testtype);
 		
 		if(totalrows == resrow && totalcols == rescol){
-			writeOutput("NO ERROR \n");
+			writeOutput("NO ERROR");
 		} else {
 			writeOutput("ERROR");
 			writeOutput("Expected rows: " + totalrows + " >> Resulted rows: " + resrow);
@@ -1180,17 +1181,31 @@ public class SNPSeekTest {
 		 
 		//create file, write to file
 		if(flag == true){
-			try {
-			    writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("SNPTestResult.txt"), "utf-8"));
-			    writer.write("------- RESULTS -------");
-			    writer.newLine();
-			    writer.newLine();
-			    writer.write(writethis);
-			    writer.newLine();
-			} catch (IOException ex) {
-			  // report
-			} finally {
-			   try {writer.close();} catch (Exception ex) {/*ignore*/}
+			File f = new File("SNPTestResult.txt");
+			//overwrite file if it exists
+			if(f.exists()){
+				try(FileWriter fw = new FileWriter("SNPTestResult.txt", false);
+					    BufferedWriter bw = new BufferedWriter(fw);
+					    PrintWriter out = new PrintWriter(bw))
+					{
+					out.println("------- RESULTS -------");
+					out.println(writethis);
+					} catch (IOException e) {
+					    //exception handling left as an exercise for the reader
+					}
+			}
+			//else create new file
+			else {
+				try {
+				    writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("SNPTestResult.txt"), "utf-8"));
+				    writer.write("------- RESULTS -------");
+				    writer.write(writethis);
+				    writer.newLine();
+				} catch (IOException ex) {
+				  // report
+				} finally {
+				   try {writer.close();} catch (Exception ex) {/*ignore*/}
+				}
 			}
 			
 			flag = false;

@@ -1,0 +1,11 @@
+------- RESULTS -------
+
+Test 1
+Test Type: snppairwise
+NO ERROR
+NO ERROR ON MISMATCH: No match found 
+
+
+Test 2
+Test Type: variety
+NO ERROR
