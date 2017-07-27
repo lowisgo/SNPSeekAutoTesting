@@ -1,0 +1,6 @@
+------- RESULTS -------
+
+Test 1
+Test Type: variety
+NO ERROR 
+
